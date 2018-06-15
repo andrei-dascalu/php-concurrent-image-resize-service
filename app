@@ -3,19 +3,19 @@
 
 declare(strict_types=1);
 
-$http = new swoole_http_server("0.0.0.0", 80);
+$http = new swoole_http_server('0.0.0.0', 80);
 
-$http->on("start", function ($server) {
-    echo "Server is started\n";
+$http->on('start', function ($server) {
+    echo 'Server is started\n';
 });
 
-$log = fopen("process.log", "a+");
+$log = fopen('process.log', 'a+');
 
-$http->on("request", function ($request, $response) use ($log) {
-    $pid = swoole_async::exec("sleep 3 && free -k | grep Mem | awk '{print $3}'", function ($result, $status) {
-        echo sprintf("Memory used: %dk\n", $result);
+$http->on('request', function ($request, $response) use ($log) {
+    $pid = swoole_async::exec('sleep 3 && free -k | grep Mem | awk \'{print $3}\'', function ($result, $status) {
+        echo sprintf('Memory used: %dk\n', $result);
     });
-    echo sprintf("Running external process with PID %d...\n", $pid);
+    echo sprintf('Running external process with PID %d...\n', $pid);
 
     $result = [
         'error' => '',
@@ -31,7 +31,7 @@ $http->on("request", function ($request, $response) use ($log) {
     } else {
         go(function() use($log, $image) {
             $message = sprintf(
-                "Process starting for url %s, in %d formats at %s\n",
+                'Process starting for url %s, in %d formats at %s\n',
                 $image['src'],
                 count($image['formats']),
                 date('Y-m-d H:i:s')
@@ -40,7 +40,7 @@ $http->on("request", function ($request, $response) use ($log) {
             $limit = 1024 * 1024 * 100;
             if (strlen($message) > $limit) {
                 $message = sprintf(
-                    "%s [truncated after %d chars]",
+                    '%s [truncated after %d chars]',
                     substr($message, 0, $limit),
                     $limit
                 );
@@ -55,7 +55,7 @@ $http->on("request", function ($request, $response) use ($log) {
 
         foreach ($image['formats'] as $format) {
             go(function () use($image, $format, $chan) {
-                $format['q'] = $format['q'] ?? 100;
+                $format['q'] = (int)$format['q'] ?? 100;
 
                 $img = resize($image, $format);
 
@@ -77,7 +77,7 @@ $http->on("request", function ($request, $response) use ($log) {
         }
     }
 
-    $response->header("Content-Type", "application/json");
+    $response->header('Content-Type', 'application/json');
     $response->end(json_encode($result));
 });
 
