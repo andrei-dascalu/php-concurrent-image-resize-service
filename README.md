@@ -20,7 +20,6 @@ Example of concurrency in PHP using [Swoole](https://github.com/swoole/swoole-sr
 curl -X POST \
   http://127.0.0.1:8080/ \
   -H 'cache-control: no-cache' \
-  -H 'postman-token: 87334f0c-70cf-604c-ea3f-5aea3c6b1525' \
   -d '{
 	"src": "https://url/to/image",
 	"formats": [
