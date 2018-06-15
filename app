@@ -9,7 +9,9 @@ $http->on("start", function ($server) {
     echo "Server is started\n";
 });
 
-$http->on("request", function ($request, $response) {
+$log = fopen("process.log", "a+");
+
+$http->on("request", function ($request, $response) use ($log) {
     $pid = swoole_async::exec("sleep 3 && free -k | grep Mem | awk '{print $3}'", function ($result, $status) {
         echo sprintf("Memory used: %dk\n", $result);
     });
@@ -27,6 +29,25 @@ $http->on("request", function ($request, $response) {
         $result['error'] = 'Missing image content and/or conversion formats';
         $response->status(400);
     } else {
+        go(function() use($log, $image) {
+            $message = sprintf(
+                "Process starting for url %s, in %d formats at %s\n",
+                $image['src'],
+                count($image['formats']),
+                date('Y-m-d H:i:s')
+            );
+            
+            $limit = 1024 * 1024 * 100;
+            if (strlen($message) > $limit) {
+                $message = sprintf(
+                    "%s [truncated after %d chars]",
+                    substr($message, 0, $limit),
+                    $limit
+                );
+            }
+            co::fwrite($log, $message);
+        });
+
         $image['raw'] = file_get_contents($image['src']);
 
         $count = count($image['formats']);
