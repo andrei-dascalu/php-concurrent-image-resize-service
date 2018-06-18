@@ -10,4 +10,4 @@ services:
       - ./:/src
       - ./images:/images
     working_dir: /src
-    command: php app
+    command: ./app
