@@ -55,7 +55,7 @@ $http->on('request', function ($request, $response) use ($log) {
 
         foreach ($image['formats'] as $format) {
             go(function () use($image, $format, $chan) {
-                $format['q'] = (int)$format['q'] ?? 100;
+                $format['q'] = $format['q'] ?? 100;
 
                 $img = resize($image, $format);
 
@@ -65,7 +65,7 @@ $http->on('request', function ($request, $response) use ($log) {
                     'size' => $img['size'],
                     'width' => $format['w'],
                     'height' => $format['h'],
-                    'quality' => $format['q'],
+                    'quality' => (int)$format['q'],
                 ];
                 $chan->push($result);
             });
