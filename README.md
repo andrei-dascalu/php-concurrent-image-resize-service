@@ -2,20 +2,26 @@
 
 Example of concurrency in PHP using [Swoole](https://github.com/swoole/swoole-src).
 
-## Requires
+## Requirements
 * Docker
 * Docker compose
 
 ## Setup and run
-* docker-compose up -d
+```
+docker-compose up -d
+``` 
 
 ## Restart service
-* docker-compose restart app
+```
+docker-compose restart app
+``` 
 
 ## Watch logs
-* docker-compose logs -f app
+```
+docker-compose logs -f app
+``` 
 
-## Call
+## Test
 ```
 curl -X POST \
   http://127.0.0.1:8080/ \
@@ -28,3 +34,5 @@ curl -X POST \
 	]
 }'
 ```
+
+Set necessary permissions to `images` directory.
